@@ -1,0 +1,16 @@
+{
+	"ArtifactsDest": "./releases",
+	"Tasks": [
+		"default",
+		"publish-github"
+	],
+	"BuildConstraints": "linux, darwin",
+	"PackageVersion": "0.0.1",
+	"TaskSettings": {
+		"publish-github": {
+			"owner": "mdp",
+			"repository": "gloss"
+		}
+	},
+	"ConfigVersion": "0.9"
+}

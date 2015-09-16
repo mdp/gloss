@@ -1,1 +1,3 @@
-/bin
+/releases
+.goxc.local.json
+
