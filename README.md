@@ -11,10 +11,10 @@ frontend to your apps.
 ## How
 
 1. Pick a hostname for your local development
-  a. `echo "127.0.0.1   local.dev" | sudo tee /etc/hosts > /dev/null`
-  a. `echo "127.0.0.1   foo.local.dev" | sudo tee /etc/hosts > /dev/null`
+  - `echo "127.0.0.1   local.dev" | sudo tee /etc/hosts > /dev/null`
+  - `echo "127.0.0.1   foo.local.dev" | sudo tee /etc/hosts > /dev/null`
 1. Setup the certificate
-  a. `gossl setup --host "local.dev,*.local.dev"`
+  - `gossl setup --host "local.dev,*.local.dev"`
 1. Import the certificate to your keychain (Mac specific instructions below)
   - `open ~/.gloss/cert.pem`
   - Find the GLoSS cert and make it "Trusted"
