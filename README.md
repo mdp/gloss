@@ -31,5 +31,5 @@ frontend to your apps.
 - Doesn't require trusting a CA cert, only valid signing for the \*.local.dev hostname for example.
 - Works on a variety of architectures with zero dependencies thanks to Golang (ARM, x86)
 
-## License: MIT
+### License: MIT
 
