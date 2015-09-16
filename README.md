@@ -8,6 +8,10 @@ Your webapp runs on HTTPS, but you develop locally on HTTP. That's not right.
 GLoSS is a very simple HTTPS reverse proxy, which sets up and serves a TLS/SSL
 frontend to your apps.
 
+## Downloads
+
+[Grab the latest release for your platform - https://github.com/mdp/gloss/releases](https://github.com/mdp/gloss/releases)
+
 ## How
 
 1. Pick a hostname for your local development
