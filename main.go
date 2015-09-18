@@ -60,6 +60,17 @@ func generateCertificate() {
 	cert.Generate()
 }
 
+func usage(msgType string) {
+	switch msgType {
+	case "setup":
+		fmt.Println("Unable to find keys, make sure you run setup first")
+		fmt.Println("e.g.\tgloss setup --host='*.local.dev,local.dev'")
+	case "mapping":
+		fmt.Println("What ports do you want to map to?")
+		fmt.Println("e.g.\tgloss --map '*:3000,someapp:4000")
+	}
+}
+
 func main() {
 	if len(os.Args) > 1 && os.Args[1] == "setup" {
 		flag.CommandLine.Parse(os.Args[2:])
@@ -69,7 +80,7 @@ func main() {
 	}
 	flag.CommandLine.Parse(os.Args[1:])
 	if len(*mappings) < 1 {
-		log.Fatal("You must specify the host mapping. Eg: --map 'foo:3000,*:4000'")
+		usage("mapping")
 		return
 	}
 	for _, mapping := range strings.Split(*mappings, ",") {
@@ -88,7 +99,8 @@ func main() {
 	}
 	cert, err := GetCerts(path)
 	if err != nil {
-		log.Fatalf("server: loadkeys: %s", err)
+		fmt.Printf("server: loadkeys: %s\n", err)
+		usage("setup")
 	}
 	config := tls.Config{Certificates: []tls.Certificate{cert}}
 	config.Rand = rand.Reader

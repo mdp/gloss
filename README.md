@@ -5,14 +5,17 @@ Develop on Localhost with SSL
 
 Your webapp runs on HTTPS, but you develop locally on HTTP. That's not right.
 
-GLoSS is a very simple HTTPS reverse proxy, which sets up and serves a TLS/SSL
-frontend to your apps.
+GLoSS is a very simple HTTPS reverse proxy.
+
+Highlights:
+- No dependencies. Just one self-contained single executable
+- Works on a variety of platforms and architectures: Mac, Linux - Arm7(Raspi2)/Arm6(Raspi)/Amd64/386
 
 ## Downloads
 
 [Grab the latest release for your platform - https://github.com/mdp/gloss/releases](https://github.com/mdp/gloss/releases)
 
-## How
+## Usage
 
 1. Pick a hostname for your local development
   - `echo "127.0.0.1   local.dev" | sudo tee /etc/hosts > /dev/null`
@@ -26,6 +29,10 @@ frontend to your apps.
   - `gloss --map "*:3000,foo:4000"` Maps foo.local.dev to port 4000, everything else to 3000
 1. Visit https://foo.local.dev:4443
   - Will return the content at localhost:4000 via HTTPS
+
+## Build from source
+
+`go get github.com/mdp/gloss`
 
 ## Notes
 

@@ -1,30 +1,18 @@
 EXECUTABLE := gloss
 
-all: clean install bin arm6 arm7 linux386 linux darwin
+all: clean install build
 
-bin:
-	go build -o "bin/$(EXECUTABLE)"
+build:
+	go build .
 
-# arm
-arm6:
-	GOARM=6 GOARCH=arm GOOS=linux go build -o "bin/linux/arm/6/$(EXECUTABLE)"
-arm7:
-	GOARM=7 GOARCH=arm GOOS=linux go build -o "bin/linux/arm/7/$(EXECUTABLE)"
-
-# 386
-linux386:
-	GOARCH=386 GOOS=linux go build -o "bin/linux/386/$(EXECUTABLE)"
-
-# amd64
-darwin:
-	GOARCH=amd64 GOOS=darwin go build -o "bin/darwin/amd64/$(EXECUTABLE)"
-linux:
-	GOARCH=amd64 GOOS=linux go build -o "bin/linux/amd64/$(EXECUTABLE)"
+release:
+	goxc
 
 install:
+	go get github.com/laher/goxc
 	go install
 
 clean:
-	rm -rf bin/
+	rm -rf debian releases
 
 .PHONY: clean release dep install
