@@ -33,15 +33,14 @@ func multipleHostReverseProxy(hostMapping *map[string]int) *httputil.ReverseProx
 	// use the subdomain to route to a specific port
 	director := func(req *http.Request) {
 		domains := strings.Split(req.Host, ".")
-		fmt.Printf("%v", req.Host)
 		topSubdomain := domains[0]
 		port := hostPortMapping["*"]
 		if hostPortMapping[topSubdomain] > 0 {
 			port = hostPortMapping[topSubdomain]
-			fmt.Printf("%s -> %d", req.Host, port)
 		}
 		req.URL.Scheme = "http"
 		req.URL.Host = "localhost:" + strconv.Itoa(port)
+		fmt.Printf("%s%s -> %d\n", req.Host, req.RequestURI, port)
 	}
 	return &httputil.ReverseProxy{Director: director}
 }
