@@ -30,6 +30,13 @@ Highlights:
 1. Visit https://foo.local.dev:4443
   - Will return the content at localhost:4000 via HTTPS
 
+
+### Setup redirection from port 443
+
+*Mac*
+
+    echo "rdr pass on lo0 inet proto tcp from any to any port 443 -> 127.0.0.1 port 4443" | sudo pfctl -ef -
+
 ## Build from source
 
 `go get github.com/mdp/gloss`

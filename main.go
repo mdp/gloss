@@ -38,7 +38,7 @@ func multipleHostReverseProxy(hostMapping *map[string]int) *httputil.ReverseProx
 		port := hostPortMapping["*"]
 		if hostPortMapping[topSubdomain] > 0 {
 			port = hostPortMapping[topSubdomain]
-			fmt.Printf("%v", port)
+			fmt.Printf("%s -> %d", req.Host, port)
 		}
 		req.URL.Scheme = "http"
 		req.URL.Host = "localhost:" + strconv.Itoa(port)
