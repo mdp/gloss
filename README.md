@@ -33,7 +33,7 @@ Highlights:
 
 ### Setup redirection from port 443
 
-*Mac*
+*Mac* (El Capitan and Yosemite)
 
     echo "rdr pass on lo0 inet proto tcp from any to any port 443 -> 127.0.0.1 port 4443" | sudo pfctl -ef -
 
