@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"net/http/httputil"
 	"os"
+	"runtime"
 	"strconv"
 	"strings"
 	"time"
@@ -59,6 +60,15 @@ func generateCertificate() {
 	cert.Generate()
 }
 
+func printPortRedirHelp(port int) {
+	fmt.Printf("*Helpful hint on how to redirect port %d -> 443*\n", port)
+	if runtime.GOOS == "windows" {
+		fmt.Printf("\tnetsh interface portproxy add v4tov4 connectport=%d listenport=443 connectaddress=127.0.0.1 listenaddress=127.0.0.1\n", port)
+	} else if runtime.GOOS == "darwin" {
+		fmt.Printf("\techo \"rdr pass on lo0 inet proto tcp from any to any port 443 -> 127.0.0.1 port %d\" | sudo pfctl -ef -\n", port)
+	}
+}
+
 func usage(msgType string) {
 	switch msgType {
 	case "setup":
@@ -105,6 +115,7 @@ func main() {
 	config.Rand = rand.Reader
 	service := "0.0.0.0:" + strconv.Itoa(*port)
 	fmt.Printf("Listening for SSL on %s\n", service)
+	printPortRedirHelp(*port)
 	listener, err := tls.Listen("tcp", service, &config)
 	proxy := multipleHostReverseProxy(&hostPortMapping)
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
