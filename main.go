@@ -5,6 +5,7 @@ import (
 	"crypto/tls"
 	"flag"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"net/http/httputil"
@@ -29,6 +30,21 @@ var (
 
 var hostPortMapping = make(map[string]int)
 
+type upstreamTransport struct {
+}
+
+func (trans *upstreamTransport) RoundTrip(req *http.Request) (*http.Response, error) {
+	res, err := http.DefaultTransport.RoundTrip(req)
+	if err != nil {
+		errorMsg := fmt.Sprintf("Gloss proxy error: %v", err)
+		return &http.Response{
+			StatusCode: http.StatusBadGateway,
+			Body:       ioutil.NopCloser(strings.NewReader(errorMsg)),
+		}, nil
+	}
+	return res, err
+}
+
 func multipleHostReverseProxy(hostMapping *map[string]int) *httputil.ReverseProxy {
 	// Fairly simple right now:
 	// use the subdomain to route to a specific port
@@ -43,7 +59,7 @@ func multipleHostReverseProxy(hostMapping *map[string]int) *httputil.ReverseProx
 		req.URL.Host = "localhost:" + strconv.Itoa(port)
 		fmt.Printf("%s%s -> %d\n", req.Host, req.RequestURI, port)
 	}
-	return &httputil.ReverseProxy{Director: director}
+	return &httputil.ReverseProxy{Director: director, Transport: &upstreamTransport{}}
 }
 
 func generateCertificate() {
