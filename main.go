@@ -42,6 +42,12 @@ func (trans *upstreamTransport) RoundTrip(req *http.Request) (*http.Response, er
 			Body:       ioutil.NopCloser(strings.NewReader(errorMsg)),
 		}, nil
 	}
+	user, _, ok := req.BasicAuth()
+	if !ok {
+		user = "-"
+	}
+	timeFmtd := time.Now().Format("02/Jan/2006 03:04:05")
+	fmt.Printf("%s %s %s [%s] \"%s %s %s\" %d %d\n", req.RemoteAddr, req.Host, user, timeFmtd, req.Method, req.RequestURI, req.Proto, res.StatusCode, res.ContentLength)
 	return res, err
 }
 
@@ -57,7 +63,7 @@ func multipleHostReverseProxy(hostMapping *map[string]int) *httputil.ReverseProx
 		}
 		req.URL.Scheme = "http"
 		req.URL.Host = "localhost:" + strconv.Itoa(port)
-		fmt.Printf("%s%s -> %d\n", req.Host, req.RequestURI, port)
+		//fmt.Printf("%s%s -> %d\n", req.Host, req.RequestURI, port)
 	}
 	return &httputil.ReverseProxy{Director: director, Transport: &upstreamTransport{}}
 }
