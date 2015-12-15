@@ -7,7 +7,7 @@
 
 // Pilfered and adapted from Golang generate_cert.go
 
-package main
+package certs
 
 import (
 	"crypto/ecdsa"
@@ -55,31 +55,31 @@ func pemBlockForKey(priv interface{}) *pem.Block {
 }
 
 // GetCerts will return the TLS certificates
-func GetCerts(path *string) (tls.Certificate, error) {
-	return tls.LoadX509KeyPair(*path+"/cert.pem", *path+"/key.pem")
+func GetCerts(certPath, keyPath *string) (tls.Certificate, error) {
+	return tls.LoadX509KeyPair(*certPath, *keyPath)
 }
 
 // Certificate with all the necessary settings
 type Certificate struct {
-	path       *string
-	host       *string
-	validFrom  *string
-	validFor   *time.Duration
-	isCA       *bool
-	rsaBits    *int
-	ecdsaCurve *string
+	Path       *string
+	Host       *string
+	ValidFrom  *string
+	ValidFor   *time.Duration
+	IsCA       *bool
+	RsaBits    *int
+	EcdsaCurve *string
 }
 
 // Generate = generate the cert
 func (c *Certificate) Generate() {
-	if len(*c.host) == 0 {
+	if len(*c.Host) == 0 {
 		log.Fatalf("Missing required --host parameter")
 	}
 	var priv interface{}
 	var err error
-	switch *c.ecdsaCurve {
+	switch *c.EcdsaCurve {
 	case "":
-		priv, err = rsa.GenerateKey(rand.Reader, *c.rsaBits)
+		priv, err = rsa.GenerateKey(rand.Reader, *c.RsaBits)
 	case "P224":
 		priv, err = ecdsa.GenerateKey(elliptic.P224(), rand.Reader)
 	case "P256":
@@ -89,7 +89,7 @@ func (c *Certificate) Generate() {
 	case "P521":
 		priv, err = ecdsa.GenerateKey(elliptic.P521(), rand.Reader)
 	default:
-		fmt.Fprintf(os.Stderr, "Unrecognized elliptic curve: %q", *c.ecdsaCurve)
+		fmt.Fprintf(os.Stderr, "Unrecognized elliptic curve: %q", *c.EcdsaCurve)
 		os.Exit(1)
 	}
 	if err != nil {
@@ -97,17 +97,17 @@ func (c *Certificate) Generate() {
 	}
 
 	var notBefore time.Time
-	if len(*c.validFrom) == 0 {
+	if len(*c.ValidFrom) == 0 {
 		notBefore = time.Now()
 	} else {
-		notBefore, err = time.Parse("Jan 2 15:04:05 2006", *c.validFrom)
+		notBefore, err = time.Parse("Jan 2 15:04:05 2006", *c.ValidFrom)
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "Failed to parse creation date: %s\n", err)
 			os.Exit(1)
 		}
 	}
 
-	notAfter := notBefore.Add(*c.validFor)
+	notAfter := notBefore.Add(*c.ValidFor)
 
 	serialNumberLimit := new(big.Int).Lsh(big.NewInt(1), 128)
 	serialNumber, err := rand.Int(rand.Reader, serialNumberLimit)
@@ -128,7 +128,7 @@ func (c *Certificate) Generate() {
 		BasicConstraintsValid: true,
 	}
 
-	hosts := strings.Split(*c.host, ",")
+	hosts := strings.Split(*c.Host, ",")
 	for _, h := range hosts {
 		if ip := net.ParseIP(h); ip != nil {
 			template.IPAddresses = append(template.IPAddresses, ip)
@@ -137,7 +137,7 @@ func (c *Certificate) Generate() {
 		}
 	}
 
-	if *c.isCA {
+	if *c.IsCA {
 		template.IsCA = true
 		template.KeyUsage |= x509.KeyUsageCertSign
 	}
@@ -147,11 +147,11 @@ func (c *Certificate) Generate() {
 		log.Fatalf("Failed to create certificate: %s", err)
 	}
 
-	err = os.MkdirAll(*c.path+"/.gloss", 0755)
+	err = os.MkdirAll(*c.Path+"/.gloss", 0755)
 	if err != nil {
 		log.Fatalf("failed to create ~/.gloss directory: %s", err)
 	}
-	certOut, err := os.Create(*c.path + "/cert.pem")
+	certOut, err := os.Create(*c.Path + "/cert.pem")
 	if err != nil {
 		log.Fatalf("failed to open cert.pem for writing: %s", err)
 	}
@@ -159,7 +159,7 @@ func (c *Certificate) Generate() {
 	certOut.Close()
 	log.Print("written cert.pem\n")
 
-	keyOut, err := os.OpenFile(*c.path+"/key.pem", os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0600)
+	keyOut, err := os.OpenFile(*c.Path+"/key.pem", os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0600)
 	if err != nil {
 		log.Print("failed to open key.pem for writing:", err)
 		return
