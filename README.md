@@ -23,7 +23,7 @@ Highlights:
   - `echo "127.0.0.1   local.dev" | sudo tee /etc/hosts > /dev/null`
   - `echo "127.0.0.1   foo.local.dev" | sudo tee /etc/hosts > /dev/null`
 1. Create a certificate
-  - `gossl setup --host "local.dev,*.local.dev"`
+  - `gloss setup --host "local.dev,*.local.dev"`
 1. Import the certificate to your keychain (Mac specific instructions below)
   - `open ~/.gloss/cert.pem`
   - Find the GLoSS cert and make it "Trusted"
