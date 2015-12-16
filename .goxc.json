@@ -5,7 +5,7 @@
 		"publish-github"
 	],
 	"BuildConstraints": "linux, darwin",
-	"PackageVersion": "0.0.5",
+	"PackageVersion": "0.1.0",
 	"TaskSettings": {
 		"publish-github": {
 			"owner": "mdp",
