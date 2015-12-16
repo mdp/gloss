@@ -46,6 +46,7 @@ Or just run `gloss -h` for more help
     netsh interface portproxy add v4tov4 connectport=4443 listenport=443 connectaddress=127.0.0.1 listenaddress=127.0.0.1
 
 *Linux*
+
     sudo iptables -t nat -A PREROUTING -p tcp --dport 443 -j REDIRECT --to-port 4443
 
 ## Build from source
