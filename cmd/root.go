@@ -39,7 +39,7 @@ func init() {
 	RootCmd.Flags().StringVar(&certPath, "cert", os.Getenv("HOME")+"/.gloss/cert.pem", "Path to cert")
 	RootCmd.Flags().StringVar(&keyPath, "key", os.Getenv("HOME")+"/.gloss/key.pem", "Path to cert key")
 	RootCmd.Flags().IntVar(&sport, "sport", 4443, "SSL listening port")
-	RootCmd.Flags().IntVar(&port, "port", 0, "HTTP listening port")
+	RootCmd.Flags().IntVar(&port, "port", 0, "HTTP listening port (0 disables HTTP Proxy)")
 }
 
 func (c *Config) setupMapping(mappingStr *string) {
@@ -128,7 +128,14 @@ func printPortRedirHelp(port int) {
 var RootCmd = &cobra.Command{
 	Use:   "gloss",
 	Short: "gloss is a very simple https reverse proxy",
-	Long:  `more information about gloss can be found at https://github.com/mdp/gloss`,
+	Long: `
+gloss lets you run a simple ssl reverse proxy on you local machine
+
+Run 'gloss setup' to create your local certs (*.local.dev and local.dev)
+Run 'gloss --map "*:3000"' to map any *.local.dev hostname to a webserver running on port 3000
+
+More information about gloss can be found at https://github.com/mdp/gloss
+`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		cert, err := certs.GetCerts(&certPath, &keyPath)
 		if err != nil {
