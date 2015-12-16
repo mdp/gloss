@@ -1,3 +1,5 @@
+![ssl error](https://www.cs.cmu.edu/~help/mail_news/images/xp_outlook_7.gif)
+
 # GLoSS (Go SSL)
 GLoSS is a very simple HTTPS reverse proxy that allows you to easily develop and test on HTTPS locally
 
