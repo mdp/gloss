@@ -141,10 +141,6 @@ var RootCmd = &cobra.Command{
 		config.setupMapping(&mappings)
 		tlsConfig := tls.Config{Certificates: []tls.Certificate{cert}}
 		tlsConfig.Rand = rand.Reader
-		tlsService := ":" + strconv.Itoa(sport)
-		httpService := ":" + strconv.Itoa(port)
-		tlsListener, err := tls.Listen("tcp", tlsService, &tlsConfig)
-		httpListener, err := net.Listen("tcp", httpService)
 		printPortRedirHelp(sport)
 		proxy := multipleHostReverseProxy(&config)
 		s := &http.Server{
@@ -153,8 +149,20 @@ var RootCmd = &cobra.Command{
 			WriteTimeout:   10 * time.Second,
 			MaxHeaderBytes: 1 << 20,
 		}
-		go s.Serve(tlsListener)
-		s.Serve(httpListener)
+		if port > 0 {
+			httpService := ":" + strconv.Itoa(port)
+			httpListener, err := net.Listen("tcp", httpService)
+			if err != nil {
+				return err
+			}
+			go s.Serve(httpListener)
+		}
+		tlsService := ":" + strconv.Itoa(sport)
+		tlsListener, err := tls.Listen("tcp", tlsService, &tlsConfig)
+		if err != nil {
+			return err
+		}
+		s.Serve(tlsListener)
 		return nil
 	},
 }
